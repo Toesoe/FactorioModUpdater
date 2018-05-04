@@ -31,7 +31,7 @@ TL DR: IDGAF what you do with this file, it took me only 30 minutes to write
 
 from __future__ import print_function
 import requests, json, sys
-from os import listdir
+from os import listdir, remove
 
 glob = {'verbose': False}
 
@@ -93,6 +93,7 @@ def download_mod(user, token, mod_dlPath, filename):
 
 
 def main():
+    global basePath
     i = 0  # uber ghetto hacks, i cba to do it the right way
 
     credentials = get_token()
@@ -104,6 +105,7 @@ def main():
         if local_files[i] != key:  # let's check if we already have the most recent version, saves some 'net bytes
             print("Downloading " + value)
             download_mod(credentials[0], credentials[1], value, key)
+            remove(basePath + "/mods/" + local_files[i])  # delete the old file, we don't want collisions
         else:
             print(key + " is already up to date")
         i += 1
