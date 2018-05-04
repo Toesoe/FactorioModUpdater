@@ -35,7 +35,7 @@ from os import listdir
 
 glob = {'verbose': False}
 
-basePath = "D:/factest"  # change this to your Factorio base path, duh
+basePath = "/opt/factorio"  # change this to your Factorio base path, duh
 
 
 def get_token():
