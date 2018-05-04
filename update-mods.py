@@ -47,7 +47,7 @@ def get_token():
     user = json_settings['username']
     token = json_settings['token']
 
-    if user == "" or token == "":
+    if user == '' or token == '':
         print("mate, did you forget to set your username and token in the server-settings.json file?")
         print("please fill 'em out then run this script again")
         exit(0)
