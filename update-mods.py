@@ -32,10 +32,11 @@ TL DR: IDGAF what you do with this file, it took me only 30 minutes to write
 from __future__ import print_function
 import requests, json, sys
 from os import listdir, remove
+import re
 
 glob = {'verbose': False}
 
-basePath = "/opt/factorio"  # change this to your Factorio base path, duh
+basePath = "D:/factest"  # change this to your Factorio base path, duh
 
 
 def get_token():
@@ -79,36 +80,37 @@ def get_downloadpaths():
 
     for name in name_list:
         r = requests.get('https://mods.factorio.com/api/mods/' + name)
-        download_url_list[r.json()['releases'][0]['file_name']] = r.json()['releases'][0]['download_url']
+        lastentry = len(r.json()['releases'])
+        download_url_list[r.json()['releases'][lastentry-1]['file_name']] = r.json()['releases'][lastentry-1]['download_url']
 
+    print(download_url_list)
     return download_url_list
 
 
-def download_mod(user, token, mod_dlPath, filename):
+def download_mod(user, token, mod_dlpath, filename):
     mod_out = open(basePath + "/mods/" + filename, "wb")
 
-    r = requests.get("https://mods.factorio.com" + str(mod_dlPath), params={'username': user, 'token': token})
+    r = requests.get("https://mods.factorio.com" + str(mod_dlpath), params={'username': user, 'token': token})
 
     mod_out.write(bytes(r.content))
 
 
 def main():
     global basePath
-    i = 0  # uber ghetto hacks, i cba to do it the right way
 
     credentials = get_token()
 
     download_dict = get_downloadpaths()
     local_files = get_localfiles()
 
-    for key, value in download_dict.items():
-        if local_files[i] != key:  # let's check if we already have the most recent version, saves some 'net bytes
+    s = set(local_files)
+
+    diff = [x for x in download_dict if x not in s]  # all files which do not exist on disk yet
+
+    for value in diff:
             print("Downloading " + value)
-            download_mod(credentials[0], credentials[1], value, key)
-            remove(basePath + "/mods/" + local_files[i])  # delete the old file, we don't want collisions
-        else:
-            print(key + " is already up to date")
-        i += 1
+            download_mod(credentials[0], credentials[1], download_dict[value], value)
+            remove(basePath + "/mods/" + re.sub('_([0-9]).*.zip', '', value))  # delete the old file, we don't want collisions
 
 
 if __name__ == '__main__':
