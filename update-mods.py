@@ -108,9 +108,11 @@ def main():
     diff = [x for x in download_dict if x not in s]  # all files which do not exist on disk yet
 
     for value in diff:
-            print("Downloading " + value)
-            download_mod(credentials[0], credentials[1], download_dict[value], value)
-            remove(basePath + "/mods/" + re.sub('_([0-9]).*.zip', '', value))  # delete the old file, we don't want collisions
+        print("Removing old version of " + re.sub('_([0-9]).*.zip', '', value))
+        remove(basePath + "/mods/" + re.sub('_([0-9]).*.zip', '',
+                                            value) + "*")  # delete the old file, we don't want collisions
+        print("Downloading " + value)
+        download_mod(credentials[0], credentials[1], download_dict[value], value)
 
 
 if __name__ == '__main__':
