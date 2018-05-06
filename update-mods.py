@@ -32,11 +32,9 @@ TL DR: IDGAF what you do with this file, it took me only 30 minutes to write
 from __future__ import print_function
 import requests, json, sys
 from os import listdir, remove
-import re
+import re, glob
 
-glob = {'verbose': False}
-
-basePath = "D:/factest"  # change this to your Factorio base path, duh
+basePath = "/opt/factorio"  # change this to your Factorio base path, duh
 
 
 def get_token():
@@ -109,8 +107,10 @@ def main():
 
     for value in diff:
         print("Removing old version of " + re.sub('_([0-9]).*.zip', '', value))
-        remove(basePath + "/mods/" + re.sub('_([0-9]).*.zip', '',
-                                            value) + "*")  # delete the old file, we don't want collisions
+
+        globDel = basePath + "/mods/" + re.sub('_([0-9]).*.zip', '', value) + "*"
+        remove(glob.glob(globDel))  # delete the old file, we don't want collisions
+        
         print("Downloading " + value)
         download_mod(credentials[0], credentials[1], download_dict[value], value)
 
