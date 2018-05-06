@@ -108,8 +108,10 @@ def main():
     for value in diff:
         print("Removing old version of " + re.sub('_([0-9]).*.zip', '', value))
 
-        globDel = basePath + "/mods/" + re.sub('_([0-9]).*.zip', '', value) + "*"
-        remove(glob.glob(globDel))  # delete the old file, we don't want collisions
+        oldfiles = basePath + "/mods/" + re.sub('_([0-9]).*.zip', '', value) + "*"
+
+        for file in oldfiles:
+            remove(file)  # delete the old file, we don't want collisions
 
         print("Downloading " + value)
         download_mod(credentials[0], credentials[1], download_dict[value], value)
